@@ -776,7 +776,7 @@ namespace LBA
 
             Rcpp::List out_filter;
             arma::vec qprob = {0.025, 0.5, 0.975};
-            arma::mat yhat_out = arma::quantile(yhat_filter, qprob, 1);
+            arma::mat yhat_out = row_quantile(yhat_filter, qprob);
 
             out_filter["yhat"] = Rcpp::wrap(yhat_out);
             out_filter["yhat_all"] = Rcpp::wrap(yhat_filter);
@@ -1026,7 +1026,7 @@ namespace LBA
             arma::cube ycast_out(nT + 1, qprob.n_elem, k);
             for (unsigned int j = 0; j < k; j ++)
             {
-                ycast_out.slice(j) = arma::quantile(ycast.slice(j), qprob, 1);
+                ycast_out.slice(j) = row_quantile(ycast.slice(j), qprob);
             }
 
             out["y_cast"] = Rcpp::wrap(ycast_out);

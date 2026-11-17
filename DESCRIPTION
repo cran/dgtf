@@ -2,7 +2,7 @@ Package: dgtf
 Type: Package
 Title: Variational and Monte Carlo Inference for Bayesian State-Space
         Models of Count Data
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person(given = "Meini", family = "Tang", role = c("aut", "cre"),
            email = "meini.tang@gmail.com",
@@ -33,10 +33,10 @@ Config/testthat/edition: 3
 URL: https://github.com/minimeini/dgtf
 BugReports: https://github.com/minimeini/dgtf/issues
 VignetteBuilder: knitr
-Config/roxygen2/version: 8.1.0
-Packaged: 2026-10-19 08:37:18 UTC; meinitang
+Config/roxygen2/version: 8.1.1
+Packaged: 2026-11-17 06:09:12 UTC; meinitang
 Author: Meini Tang [aut, cre] (ORCID: <https://orcid.org/0000-0001-5338-8772>),
   Raquel Prado [aut] (ORCID: <https://orcid.org/0000-0001-6709-7191>)
 Maintainer: Meini Tang <meini.tang@gmail.com>
 Repository: CRAN
-Date/Publication: 2026-10-28 12:20:12 UTC
+Date/Publication: 2026-11-17 08:50:20 UTC

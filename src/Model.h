@@ -338,7 +338,7 @@ public:
         Rcpp::List out;
         arma::vec qprob = {0.025, 0.5, 0.975};
 
-        arma::mat yhat_qt = arma::quantile(yhat, qprob, 1);
+        arma::mat yhat_qt = row_quantile(yhat, qprob);
         out["yhat"] = Rcpp::wrap(yhat_qt);
         out["yhat_all"] = Rcpp::wrap(yhat);
         out["residual"] = Rcpp::wrap(residual);
@@ -806,7 +806,7 @@ public:
 
         arma::mat psi_all = Theta_all.row_as_mat(0); // (nT + 1 + k) x nsample
         arma::vec qprob = {0.025, 0.5, 0.975};
-        arma::mat psi_qt = arma::quantile(psi_all, qprob, 1);
+        arma::mat psi_qt = row_quantile(psi_all, qprob);
 
         out["psi_all"] = Rcpp::wrap(psi_qt);
         
@@ -904,7 +904,7 @@ public:
         std::map<std::string, AVAIL::Loss> loss_list = AVAIL::loss_list;
         for (unsigned int j = 0; j < k; j ++)
         {
-            arma::mat ycast_qt = arma::quantile(ycast.slice(j), qprob, 1);
+            arma::mat ycast_qt = row_quantile(ycast.slice(j), qprob);
             yqt.slice(j) = ycast_qt;
             arma::mat ytmp = arma::abs(y_err_cast.slice(j)); // (nT + 1) x nsample
 
@@ -1111,7 +1111,7 @@ public:
         Rcpp::List out;
         arma::vec qprob = {0.025, 0.5, 0.975};
 
-        arma::mat yhat_qt = arma::quantile(yhat, qprob, 1);
+        arma::mat yhat_qt = row_quantile(yhat, qprob);
         out["yhat"] = Rcpp::wrap(yhat_qt);
         out["residual"] = Rcpp::wrap(residual);
         out["y_loss"] = Rcpp::wrap(y_loss);

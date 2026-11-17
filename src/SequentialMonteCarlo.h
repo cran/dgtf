@@ -1530,8 +1530,8 @@ namespace SMC
                 Rprintf("\n");
             }
 
-            output["psi_filter"] = Rcpp::wrap(arma::quantile(psi_forward.tail_rows(y.n_elem), ci_prob, 1));
-            output["psi"] = Rcpp::wrap(arma::quantile(psi_smooth.tail_rows(y.n_elem), ci_prob, 1));
+            output["psi_filter"] = Rcpp::wrap(row_quantile(psi_forward.tail_rows(y.n_elem), ci_prob));
+            output["psi"] = Rcpp::wrap(row_quantile(psi_smooth.tail_rows(y.n_elem), ci_prob));
             output["log_marginal_likelihood"] = arma::accu(log_cond_marginal);
         }
     };
@@ -1664,7 +1664,7 @@ namespace SMC
             }
 
             arma::mat psi = Theta_smooth.row_as_mat(0);
-            output["psi"] = Rcpp::wrap(arma::quantile(psi, ci_prob, 1));
+            output["psi"] = Rcpp::wrap(row_quantile(psi, ci_prob));
             return;
         }
 
@@ -1721,7 +1721,7 @@ namespace SMC
                 use_discount, discount_factor, verbose);
 
             arma::mat psi = Theta.row_as_mat(0); // (nT + 1) x N
-            output["psi_filter"] = Rcpp::wrap(arma::quantile(psi, ci_prob, 1));
+            output["psi_filter"] = Rcpp::wrap(row_quantile(psi, ci_prob));
             output["eff_forward"] = Rcpp::wrap(eff_forward.t());
             output["log_marginal_likelihood"] = log_cond_marg;
 
@@ -2118,7 +2118,7 @@ namespace SMC
             // psi_backward = Theta_backward.row_as_mat(0); // (nT + 1) x N
             arma::mat psi = Theta_backward.row_as_mat(0);
             output["eff_backward"] = Rcpp::wrap(eff_backward.t());
-            output["psi_backward"] = Rcpp::wrap(arma::quantile(psi, ci_prob, 1));
+            output["psi_backward"] = Rcpp::wrap(row_quantile(psi, ci_prob));
             if (model.zero.inflated)
             {
                 output["z_backward"] = Rcpp::wrap(arma::vectorise(arma::mean(z_backward, 0)));
@@ -2243,7 +2243,7 @@ namespace SMC
             // psi_backward = Theta_backward.row_as_mat(0); // (nT + 1) x N
             output["eff_backward"] = Rcpp::wrap(eff_backward.t());
             arma::mat psi = Theta_backward.row_as_mat(0);
-            output["psi_backward"] = Rcpp::wrap(arma::quantile(psi, ci_prob, 1));
+            output["psi_backward"] = Rcpp::wrap(row_quantile(psi, ci_prob));
             if (model.zero.inflated)
             {
                 output["z_backward"] = Rcpp::wrap(z_backward);
@@ -2519,7 +2519,7 @@ namespace SMC
             }
 
             arma::mat psi = Theta_smooth.row_as_mat(0);
-            output["psi"] = Rcpp::wrap(arma::quantile(psi, ci_prob, 1));
+            output["psi"] = Rcpp::wrap(row_quantile(psi, ci_prob));
             if (model.zero.inflated)
             {
                 output["z"] = Rcpp::wrap(arma::vectorise(arma::mean(z_smooth, 0)));
@@ -2616,7 +2616,7 @@ namespace SMC
 
             if (smoothing)
             {
-                output["psi_filter"] = Rcpp::wrap(arma::quantile(psi, ci_prob, 1));
+                output["psi_filter"] = Rcpp::wrap(row_quantile(psi, ci_prob));
                 if (model.zero.inflated)
                 {
                     output["z_filter"] = Rcpp::wrap(arma::vectorise(arma::mean(z, 0)));
@@ -2626,7 +2626,7 @@ namespace SMC
             }
             else
             {
-                output["psi"] = Rcpp::wrap(arma::quantile(psi, ci_prob, 1));
+                output["psi"] = Rcpp::wrap(row_quantile(psi, ci_prob));
                 if (model.zero.inflated)
                 {
                     output["z"] = Rcpp::wrap(arma::vectorise(arma::mean(z, 0)));
@@ -3177,7 +3177,7 @@ namespace SMC
             if (!filter_pass)
             {
                 arma::mat psi = Theta.row_as_mat(0);
-                output["psi_filter"] = Rcpp::wrap(arma::quantile(psi, ci_prob, 1));
+                output["psi_filter"] = Rcpp::wrap(row_quantile(psi, ci_prob));
                 output["eff_forward"] = Rcpp::wrap(eff_forward.t());
                 if (prior_W.infer)
                 {
@@ -3375,7 +3375,7 @@ namespace SMC
             }
 
             arma::mat psi = Theta_backward.row_as_mat(0); // (nT + 1) x N
-            output["psi_backward"] = Rcpp::wrap(arma::quantile(psi, ci_prob, 1));
+            output["psi_backward"] = Rcpp::wrap(row_quantile(psi, ci_prob));
             output["eff_backward"] = Rcpp::wrap(eff_backward.t());
             return;
         }
@@ -3422,7 +3422,7 @@ namespace SMC
             }
 
             arma::mat psi = Theta_smooth.row_as_mat(0);
-            output["psi"] = Rcpp::wrap(arma::quantile(psi, ci_prob, 1));
+            output["psi"] = Rcpp::wrap(row_quantile(psi, ci_prob));
         }
 
         void two_filter_smoother(Model &model, const arma::vec &y, const bool &verbose = VERBOSE)
@@ -3563,7 +3563,7 @@ namespace SMC
             }
 
             arma::mat psi = Theta_smooth.row_as_mat(0);
-            output["psi"] = Rcpp::wrap(arma::quantile(psi, ci_prob, 1));
+            output["psi"] = Rcpp::wrap(row_quantile(psi, ci_prob));
             return;
         }
 

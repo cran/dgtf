@@ -885,7 +885,7 @@ namespace MCMC
             arma::vec qprob = {0.025, 0.5, 0.975};
             Rcpp::List output;
 
-            arma::mat psi_quantile = arma::quantile(psi_stored, qprob, 1); // (nT + 1) x 3
+            arma::mat psi_quantile = row_quantile(psi_stored, qprob); // (nT + 1) x 3
             output["psi_stored"] = Rcpp::wrap(psi_stored);
             output["psi"] = Rcpp::wrap(psi_quantile);
             output["wt_accept"] = Rcpp::wrap(wt_accept / ntotal);
@@ -895,7 +895,7 @@ namespace MCMC
                 output["z_stored"] = Rcpp::wrap(arma::vectorise(arma::mean(z_stored, 1)));
             }
             
-            // arma::mat psi_quantile = arma::quantile(wt_stored, qprob, 1); // (nT + 1) x 3
+            // arma::mat psi_quantile = row_quantile(wt_stored, qprob); // (nT + 1) x 3
             // output["psi"] = Rcpp::wrap(psi_quantile);
             // output["wt_accept"] = Rcpp::wrap(W_accept / ntotal);
             // output["log_marg"] = Rcpp::wrap(log_marg_stored.t());

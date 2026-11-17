@@ -968,7 +968,7 @@ namespace VB
 
             output["psi_stored"] = Rcpp::wrap(psi_stored);
             arma::vec qprob = {0.025, 0.5, 0.975};
-            arma::mat psi_quantile = arma::quantile(psi_stored, qprob, 1);
+            arma::mat psi_quantile = row_quantile(psi_stored, qprob);
             output["psi"] = Rcpp::wrap(psi_quantile);
 
             std::map<std::string, SysEq::Evolution> sys_list = SysEq::sys_list;

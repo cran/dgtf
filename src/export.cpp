@@ -562,9 +562,9 @@ Rcpp::List dgtf_posterior_predictive(
     arma::vec lambda_mean = arma::mean(lambda_stored, 1);
     output2["fitted_mean"] = Rcpp::NumericVector(fitted_mean.begin(), fitted_mean.end());
     output2["fitted_var"] = Rcpp::NumericVector(fitted_var.begin(), fitted_var.end());
-    output2["fitted_qt"] = Rcpp::wrap(arma::mat(arma::quantile(mu_stored, prob, 1)));
+    output2["fitted_qt"] = Rcpp::wrap(arma::mat(row_quantile(mu_stored, prob)));
     output2["lambda_mean"] = Rcpp::NumericVector(lambda_mean.begin(), lambda_mean.end());
-    output2["lambda_qt"] = Rcpp::wrap(arma::mat(arma::quantile(lambda_stored, prob, 1)));
+    output2["lambda_qt"] = Rcpp::wrap(arma::mat(row_quantile(lambda_stored, prob)));
     if (nrep > 0)
     {
         arma::cube ytmp = yhat.reshape(ntime + 1, nsample * nrep, 1);
@@ -573,7 +573,7 @@ Rcpp::List dgtf_posterior_predictive(
         
         try
         {
-            arma::mat yqt = arma::quantile(yhat2, prob, 1);
+            arma::mat yqt = row_quantile(yhat2, prob);
             output2["yhat"] = Rcpp::wrap(yqt);
 
             // Drop the t=0 initial row to match how `chi` and the time loop are averaged.
@@ -596,7 +596,7 @@ Rcpp::List dgtf_posterior_predictive(
         }
     }
 
-    arma::mat hpsi_qt = arma::quantile(hpsi_stored, prob, 1);
+    arma::mat hpsi_qt = row_quantile(hpsi_stored, prob);
     output2["Rt"] = Rcpp::wrap(hpsi_qt);
 
     // Always-available width on the latent intensity:
@@ -942,7 +942,7 @@ Rcpp::List dgtf_forecast(
     }
 
     arma::vec prob = {0.025, 0.5, 0.975};
-    arma::mat yqt = arma::quantile(ypred_sub, prob, 1);
+    arma::mat yqt = row_quantile(ypred_sub, prob);
 
     Rcpp::List out;
     out["yqt"] = Rcpp::wrap(yqt);

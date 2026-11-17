@@ -303,6 +303,99 @@ inline double dnorm_cpp(double x, double mu, double sd, bool logd=true) {
 
 
 /**
+ * Sample quantiles of each row of a matrix.
+ *
+ * A replacement for arma::quantile(X, prob, 1). It uses the same estimator
+ * (definition 5 of Hyndman and Fan, 1996) and the same arithmetic, so the
+ * results are identical wherever arma::quantile() is well defined.
+ *
+ * arma::quantile() reads the order statistic at k = floor(N * p + 0.5)
+ * after checking only that p <= (N - 0.5) / N. When p equals that bound,
+ * k is N and the read is one element past the end of its work vector. The
+ * 97.5% quantile of N = 20 draws is such a case. Here k itself is checked
+ * against the number of draws.
+ *
+ * @param X Samples, one row per quantity (nrow x N)
+ * @param prob Probabilities (nprob x 1)
+ * @return Quantiles (nrow x nprob)
+ */
+inline arma::mat row_quantile(const arma::mat &X, const arma::vec &prob)
+{
+    if (X.is_empty())
+    {
+        return arma::mat();
+    }
+
+    const arma::uword n = X.n_cols;
+    const double N = static_cast<double>(n);
+    const double p_min = 0.5 / N;
+    const double p_max = (N - 0.5) / N;
+
+    arma::mat out(X.n_rows, prob.n_elem);
+    arma::vec draws(n);
+    double *first = draws.memptr();
+    double *last = first + n;
+
+    for (arma::uword r = 0; r < X.n_rows; ++r)
+    {
+        for (arma::uword j = 0; j < n; ++j)
+        {
+            first[j] = X.at(r, j);
+        }
+
+        for (arma::uword i = 0; i < prob.n_elem; ++i)
+        {
+            const double p = prob.at(i);
+            double val;
+
+            if (std::isnan(p))
+            {
+                val = arma::datum::nan;
+            }
+            else if (p < p_min)
+            {
+                val = (p < 0.) ? -arma::datum::inf : draws.min();
+            }
+            else if (p > p_max)
+            {
+                val = (p > 1.) ? arma::datum::inf : draws.max();
+            }
+            else
+            {
+                // p is within [p_min, p_max], so N * p + 0.5 is within
+                // [1, N] up to rounding; the two ends are handled below.
+                const arma::uword k = static_cast<arma::uword>(std::floor(N * p + 0.5));
+                if (k < 1)
+                {
+                    val = draws.min();
+                }
+                else if (k >= n)
+                {
+                    val = draws.max();
+                }
+                else
+                {
+                    const double p_k = (static_cast<double>(k) - 0.5) / N;
+                    const double w = (p - p_k) * N;
+
+                    std::nth_element(first, first + k, last);
+                    const double upper = first[k];
+                    std::nth_element(first, first + (k - 1), first + k);
+                    const double lower = first[k - 1];
+
+                    val = ((1. - w) * lower) + (w * upper);
+                }
+            }
+
+            out.at(r, i) = val;
+        }
+    }
+
+    return out;
+}
+
+
+/**
  * Calculate CRPS for posterior predictive samples
  * 
  * @param y Observations vector (nT x 1)
